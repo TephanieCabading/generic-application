@@ -3,6 +3,7 @@ package com.manuelnaranjo.btle.test1;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +14,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.broadcom.bt.le.api.BleAdapter;
+import com.broadcom.bt.le.api.BleClientProfile;
 import com.stericson.RootTools.CommandCapture;
 import com.stericson.RootTools.RootTools;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
     private static boolean D = true;
@@ -141,6 +145,14 @@ public class MainActivity extends Activity {
 
                 Toast.makeText(getApplicationContext(), "using " + uuid + " on address " + addr,
                         Toast.LENGTH_LONG).show();
+
+                BluetoothDevice btDev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(addr);
+
+                ArrayList<String> uuids = new ArrayList<String>();
+                uuids.add(uuid);
+                BleClientProfile service = GenericClientProfile.buildProfile(
+                        getApplicationContext(), uuids);
+                service.connect(btDev);
         }
     }
 }

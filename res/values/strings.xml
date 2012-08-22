@@ -16,5 +16,8 @@
     <string name="select_device">Choose device</string>
     <string name="select_service">Choose service</string>
     <string name="bt_not_enabled_leaving">Bluetooth is not enabled, leaving</string>
+    <string name="text_log">Log</string>
+    <string name="lbl_write_char">New Value</string>
+    <string name="btnSend">Send</string>
 
 </resources>

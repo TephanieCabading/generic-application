@@ -11,21 +11,29 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.broadcom.bt.le.api.BleAdapter;
-import com.broadcom.bt.le.api.BleClientProfile;
+import com.broadcom.bt.le.api.BleCharacteristic;
 import com.stericson.RootTools.CommandCapture;
 import com.stericson.RootTools.RootTools;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements GenericClientProfile.Listener {
     private static boolean D = true;
     private static final String TAG = "BTLE-test";
 
     private BluetoothAdapter mAdapter;
-    private BleAdapter mLEAdapter;
+    private TextView mTextView;
+    private EditText mSendText;
+    private ScrollView mScroll;
+    private BluetoothDevice mTarget;
+    private GenericClientProfile mService;
+    private BleCharacteristic mChar;
 
     private static final int DEVICE_SELECT = 1;
     private static final int REQUEST_ENABLE_BT = 2;
@@ -82,13 +90,30 @@ public class MainActivity extends Activity {
                     .show();
         }
 
-        mLEAdapter = new BleAdapter(getApplicationContext());
-
         Button scanButton = (Button) findViewById(R.id.btnInquiry);
         scanButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, InquiryActivity.class);
                 startActivityForResult(intent, DEVICE_SELECT);
+            }
+        });
+
+        mTextView = (TextView) findViewById(R.id.txtLog);
+        mScroll = (ScrollView) findViewById(R.id.scroll);
+
+        mSendText = (EditText) findViewById(R.id.editSend);
+
+        Button sendButton = (Button) findViewById(R.id.btnSend);
+        sendButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (mService == null)
+                    return;
+                String t = mSendText.getText().toString().trim();
+                if (t.length()==0)
+                    return;
+                mService.writeCharacteristic(mTarget, mChar,
+                        Integer.parseInt(t));
+
             }
         });
     }
@@ -103,7 +128,7 @@ public class MainActivity extends Activity {
         // Get the device MAC address
         String address = data.getExtras()
                 .getString(InquiryActivity.EXTRA_DEVICE_ADDRESS);
-
+        mTarget = mAdapter.getRemoteDevice(address);
         Intent intent = new Intent(MainActivity.this, UuidActivity.class);
         intent.putExtra(UuidActivity.EXTRA_DEVICE_ADDRESS, address);
         startActivityForResult(intent, SERVICE_SELECT);
@@ -150,9 +175,40 @@ public class MainActivity extends Activity {
 
                 ArrayList<String> uuids = new ArrayList<String>();
                 uuids.add(uuid);
-                BleClientProfile service = GenericClientProfile.buildProfile(
-                        getApplicationContext(), uuids);
-                service.connect(btDev);
+                mService = GenericClientProfile.buildProfile(getApplicationContext(), uuids, this);
+                mService.connect(btDev);
         }
+    }
+
+    private void appendText(final String t) {
+        runOnUiThread(new Runnable() {
+            public void run()
+            {
+                mTextView.append(t);
+                mScroll.pageScroll(View.FOCUS_DOWN);
+            }
+        });
+    }
+
+    @Override
+    public void gotCharacteristic(final BleCharacteristic c) {
+        appendText("got characteristic: " + c.getValueInt() + "\n");
+        mChar = c;
+    }
+
+    @Override
+    public void refreshed(final String addr) {
+        appendText("refreshed: " + addr + "\n");
+    }
+
+    @Override
+    public void connected(String addr) {
+        appendText("connected: " + addr + "\n");
+
+    }
+
+    @Override
+    public void disconnected(String addr) {
+        appendText("disconnected: " + addr + "\n");
     }
 }

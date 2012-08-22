@@ -32,6 +32,8 @@ public class InquiryActivity extends Activity {
     // Return Intent extra
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
+    private static final boolean FILTER_LE = true;
+    
     // Member fields
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
@@ -94,7 +96,7 @@ public class InquiryActivity extends Activity {
                 if (type == BleAdapter.DEVICE_TYPE_BLE)
                     mPairedDevicesArrayAdapter.add("Bluetooth(c) Smart\n" + device.getName() + "\n"
                             + device.getAddress());
-                else
+                else if (!FILTER_LE)
                     mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
@@ -177,7 +179,7 @@ public class InquiryActivity extends Activity {
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     if (type==BleAdapter.DEVICE_TYPE_BLE)
                         mNewDevicesArrayAdapter.add("Bluetooth (c) Smart\n" + device.getName() + "\n" + device.getAddress());
-                    else
+                    else if (!FILTER_LE)
                         mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
                 // When discovery is finished, change the Activity title

@@ -4,7 +4,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/RootTools-2.2.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="/home/manuel/Android/CM/out/target/common/obj/JAVA_LIBRARIES/btle-api_intermediates/javalib.jar" sourcepath="/android"/>
+	<classpathentry kind="lib" path="/home/manuel/Android/CM/out/target/common/obj/JAVA_LIBRARIES/btle-api_intermediates/javalib.jar" sourcepath="/android/btle/api/java/src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

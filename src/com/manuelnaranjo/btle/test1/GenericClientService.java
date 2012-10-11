@@ -2,6 +2,7 @@
 package com.manuelnaranjo.btle.test1;
 
 import android.bluetooth.BluetoothDevice;
+import android.util.Log;
 
 import com.broadcom.bt.le.api.BleCharacteristic;
 import com.broadcom.bt.le.api.BleClientService;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GenericClientService extends BleClientService {
+    private static final String TAG = "GCS";
     static private Map<BleGattID, GenericClientService> services = new
             HashMap<BleGattID, GenericClientService>();
 
@@ -60,6 +62,7 @@ public class GenericClientService extends BleClientService {
     public void onReadCharacteristicComplete(BluetoothDevice remoteDevice,
             BleCharacteristic characteristic) {
         // TODO Auto-generated method stub
+        Log.v(TAG, "onReadChacacteristicComplete!");
         super.onReadCharacteristicComplete(remoteDevice, characteristic);
     }
 
